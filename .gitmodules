@@ -1,0 +1,9 @@
+[submodule "tsconfig"]
+	path = tsconfig
+	url = https://github.com/gorilla-devs/tsconfig
+[submodule "eslint-config-common"]
+	path = eslint-config-common
+	url = https://github.com/gorilla-devs/eslint-config-common
+[submodule ".vscode"]
+	path = .vscode
+	url = https://github.com/gorilla-devs/vscode-common-config
