@@ -4,6 +4,7 @@
   "private": false,
   "main": "index.ts",
   "scripts": {
+    "demo": "vite",
     "format": "prettier -w .",
     "check-tsc": "tsc --noEmit",
     "check-eslint": "eslint --cache --fix \"src/**/*.{ts,js,tsx,jsx}\"",
@@ -14,9 +15,12 @@
     "eslint-config-common": "./eslint-config-common",
     "git-commit-msg-linter": "^4.1.3",
     "husky": "^8.0.1",
-    "lint-staged": "^13.0.0",
-    "solid-js": "^1.4.3",
-    "svgo": "^2.8.0"
+    "lint-staged": "^13.0.3",
+    "sass": "^1.53.0",
+    "solid-js": "^1.4.4",
+    "svgo": "^2.8.0",
+    "vite": "^2.9.12",
+    "vite-plugin-solid": "^2.2.6"
   },
   "pre-commit": [
     "format"
