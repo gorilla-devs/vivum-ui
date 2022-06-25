@@ -1,12 +1,13 @@
-import styles from "@ui/Button/styles.module.scss";
-import type { JSX } from "solid-js/jsx-runtime";
+import { children } from "solid-js";
+import style from "@ui/Button/style.module.scss";
 
 type Props = {
-  children: JSX.Element;
+  children: HTMLElement | string;
 };
 
 function Button(props: Props) {
-  return <button class={styles.test}>{props.children}</button>;
+  const c = children(() => props.children);
+  return <div class={style.buttonContainer}>{c()}</div>;
 }
 
 export default Button;
