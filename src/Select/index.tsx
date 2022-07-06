@@ -24,6 +24,7 @@ function Select(props: Props) {
   let listboxRef: HTMLDivElement;
   let listboxTriggerRef: HTMLDivElement;
   let listboxScrollRef: HTMLDivElement;
+  let searchInputRef: HTMLInputElement;
 
   const closeListBox = () => {
     listboxScrollRef.scrollTo(0, 0);
@@ -73,6 +74,7 @@ function Select(props: Props) {
           if (!visible()) {
             closeListBox();
           } else if (globalThis.document.querySelector) {
+            searchInputRef.focus();
             const selected: HTMLElement | null =
               globalThis.document.querySelector(
                 `.${style.listboxScroll} .${style.selectedItem}`
@@ -143,6 +145,7 @@ function Select(props: Props) {
         <input
           class={style.filterInput}
           onClick={(e) => e.stopPropagation()}
+          ref={searchInputRef}
           onInput={(e) => {
             setFilteredItems(
               fuzzysort
@@ -154,28 +157,33 @@ function Select(props: Props) {
           }}
           placeholder="Search..."
         />
-        <div ref={listboxScrollRef} class={style.listboxScroll}>
-          <div class={style.optionGroup}>
-            <For each={filteredItems()}>
-              {(option, index) => (
-                <option
-                  class={style.option}
-                  classList={{
-                    [style.selectedItem]: selectedItemIndex() === index(),
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedItemIndex(index);
-                    closeListBox();
-                  }}
-                >
-                  {option}
-                </option>
-              )}
-            </For>
-          </div>
-        </div>
+        <Switch>
+          <Match when={filteredItems().length > 0}>
+            <div ref={listboxScrollRef} class={style.listboxScroll}>
+              <div class={style.optionGroup}>
+                <For each={filteredItems()}>
+                  {(option, index) => (
+                    <option
+                      class={style.option}
+                      classList={{
+                        [style.selectedItem]: selectedItemIndex() === index(),
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedItemIndex(index);
+                        closeListBox();
+                      }}
+                    >
+                      {option}
+                    </option>
+                  )}
+                </For>
+              </div>
+            </div>
+          </Match>
+          <Match when={filteredItems().length === 0}>{"No result found"}</Match>
+        </Switch>
       </div>
     </div>
   );
