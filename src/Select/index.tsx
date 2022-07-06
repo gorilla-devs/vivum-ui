@@ -75,6 +75,8 @@ function Select(props: Props) {
             closeListBox();
           } else if (globalThis.document.querySelector) {
             searchInputRef.focus();
+            searchInputRef.value = "";
+            setFilteredItems(props.options);
             const selected: HTMLElement | null =
               globalThis.document.querySelector(
                 `.${style.listboxScroll} .${style.selectedItem}`
