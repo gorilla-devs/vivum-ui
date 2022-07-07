@@ -14,12 +14,15 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@fontsource/ubuntu": "^4.5.10",
     "eslint-config-common": "./eslint-config-common",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "postcss": "^8.4.14",
     "sass": "^1.53.0",
     "solid-js": "^1.4.5",
     "svgo": "^2.8.0",
+    "tailwindcss": "^3.1.5",
     "vite": "^2.9.13",
     "vite-plugin-solid": "^2.2.6"
   },
@@ -36,5 +39,8 @@
   },
   "dependencies": {
     "fuzzysort": "^2.0.1"
-  }
+  },
+  "workspaces": [
+    "eslint-config-common"
+  ]
 }

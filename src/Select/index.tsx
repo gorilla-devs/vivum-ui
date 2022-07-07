@@ -7,7 +7,7 @@ import {
   onCleanup,
   Switch,
 } from "solid-js";
-import style from "@ui/Select/style.module.scss";
+import type { Accessor } from "solid-js";
 
 // TODO: Allow lazily loaded options with potentially prefilled defaults.
 export interface Props {
@@ -25,11 +25,22 @@ function Select(props: Props) {
   let listboxTriggerRef: HTMLDivElement;
   let listboxScrollRef: HTMLDivElement;
   let searchInputRef: HTMLInputElement;
+  let selectedItem: HTMLOptionElement;
 
   const closeListBox = () => {
     listboxScrollRef.scrollTo(0, 0);
     setVisible(false);
   };
+
+  const updateSelectedRef = (
+    el: HTMLOptionElement,
+    index: Accessor<number>
+  ) => {
+    if (selectedItemIndex() === index()) {
+      selectedItem = el;
+    }
+  };
+
   createEffect(() => {
     if (globalThis.addEventListener && visible()) {
       globalThis.addEventListener("click", closeListBox);
@@ -44,9 +55,15 @@ function Select(props: Props) {
           const isPartiallyOutsideView = entry.intersectionRatio !== 1;
 
           if (isPartiallyOutsideView) {
-            listboxRef.classList.add(style.expandUp);
+            listboxRef.classList.add("bottom-full");
+            listboxRef.classList.add("top-auto");
+            listboxRef.classList.remove("top-full");
+            listboxRef.classList.remove("bottom-auto");
           } else {
-            listboxRef.classList.remove(style.expandUp);
+            listboxRef.classList.remove("bottom-full");
+            listboxRef.classList.remove("top-auto");
+            listboxRef.classList.add("top-full");
+            listboxRef.classList.add("bottom-auto");
           }
         });
       };
@@ -65,9 +82,11 @@ function Select(props: Props) {
   });
 
   return (
-    <div class={style.selectmenu} onClick={(e) => e.stopPropagation()}>
+    <div
+      class="top-auto font-main relative block outline outline-offset-2 outline-blue-500 bg-white w-max min-w-fit select-none"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div
-        class={style.button}
         onClick={(e) => {
           e.stopPropagation();
           setVisible(!visible());
@@ -77,10 +96,7 @@ function Select(props: Props) {
             searchInputRef.focus();
             searchInputRef.value = "";
             setFilteredItems(props.options);
-            const selected: HTMLElement | null =
-              globalThis.document.querySelector(
-                `.${style.listboxScroll} .${style.selectedItem}`
-              );
+            const selected = selectedItem;
 
             if (selected) {
               listboxScrollRef.scrollTop =
@@ -89,7 +105,7 @@ function Select(props: Props) {
           }
         }}
       >
-        <div class={style.selectedValue}>
+        <div class="flex justify-between items-center h-8 w-60 px-2">
           <Switch>
             <Match when={selectedItemIndex() === -1}>
               {"Select an option"}
@@ -136,16 +152,20 @@ function Select(props: Props) {
           </Switch>
         </div>
       </div>
-      <div ref={listboxTriggerRef} class={style.listboxTrigger} />
+      <div
+        ref={listboxTriggerRef}
+        class="absolute h-px bottom-0 right-0 left-0 top-72"
+      />
       <div
         ref={listboxRef}
-        class={style.listbox}
+        class="absolute bg-white w-full top-full bottom-auto mt-2 p-4 drop-shadow-md"
         classList={{
-          [style.showListbox]: visible(),
+          block: visible(),
+          hidden: !visible(),
         }}
       >
         <input
-          class={style.filterInput}
+          class="p-1 w-full mb-4"
           onClick={(e) => e.stopPropagation()}
           ref={searchInputRef}
           onInput={(e) => {
@@ -161,20 +181,26 @@ function Select(props: Props) {
         />
         <Switch>
           <Match when={filteredItems().length > 0}>
-            <div ref={listboxScrollRef} class={style.listboxScroll}>
-              <div class={style.optionGroup}>
+            <div ref={listboxScrollRef} class="max-h-48 overflow-auto">
+              <div>
                 <For each={filteredItems()}>
                   {(option, index) => (
                     <option
-                      class={style.option}
-                      classList={{
-                        [style.selectedItem]: selectedItemIndex() === index(),
-                      }}
+                      ref={(el) => updateSelectedRef(el, index)}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setSelectedItemIndex(index);
                         closeListBox();
+                      }}
+                      class="px-2 mr-1 rounded h-8 flex items-center"
+                      classList={{
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        "bg-black bg-opacity-20":
+                          selectedItemIndex() === index(),
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        "hover:bg-black hover:bg-opacity-10":
+                          selectedItemIndex() !== index(),
                       }}
                     >
                       {option}
