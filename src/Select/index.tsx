@@ -7,7 +7,6 @@ import {
   onCleanup,
   Switch,
 } from "solid-js";
-import type { Accessor } from "solid-js";
 
 // TODO: Allow lazily loaded options with potentially prefilled defaults.
 export interface Props {
@@ -28,17 +27,7 @@ function Select(props: Props) {
   let selectedItem: HTMLOptionElement;
 
   const closeListBox = () => {
-    listboxScrollRef.scrollTo(0, 0);
     setVisible(false);
-  };
-
-  const updateSelectedRef = (
-    el: HTMLOptionElement,
-    index: Accessor<number>
-  ) => {
-    if (selectedItemIndex() === index()) {
-      selectedItem = el;
-    }
   };
 
   createEffect(() => {
@@ -184,28 +173,37 @@ function Select(props: Props) {
             <div ref={listboxScrollRef} class="max-h-48 overflow-auto">
               <div>
                 <For each={filteredItems()}>
-                  {(option, index) => (
-                    <option
-                      ref={(el) => updateSelectedRef(el, index)}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setSelectedItemIndex(index);
-                        closeListBox();
-                      }}
-                      class="px-2 mr-1 rounded h-8 flex items-center"
-                      classList={{
-                        // eslint-disable-next-line @typescript-eslint/naming-convention
-                        "bg-black bg-opacity-20":
-                          selectedItemIndex() === index(),
-                        // eslint-disable-next-line @typescript-eslint/naming-convention
-                        "hover:bg-black hover:bg-opacity-10":
-                          selectedItemIndex() !== index(),
-                      }}
-                    >
-                      {option}
-                    </option>
-                  )}
+                  {(option, index) => {
+                    let ref: HTMLOptionElement;
+                    createEffect(() => {
+                      if (selectedItemIndex() === index()) {
+                        selectedItem = ref;
+                      }
+                    });
+
+                    return (
+                      <option
+                        ref={ref}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setSelectedItemIndex(index);
+                          closeListBox();
+                        }}
+                        class="px-2 mr-1 rounded h-8 flex items-center"
+                        classList={{
+                          // eslint-disable-next-line @typescript-eslint/naming-convention
+                          "bg-black bg-opacity-20":
+                            selectedItemIndex() === index(),
+                          // eslint-disable-next-line @typescript-eslint/naming-convention
+                          "hover:bg-black hover:bg-opacity-10":
+                            selectedItemIndex() !== index(),
+                        }}
+                      >
+                        {option}
+                      </option>
+                    );
+                  }}
                 </For>
               </div>
             </div>
