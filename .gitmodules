@@ -7,6 +7,3 @@
 [submodule ".vscode"]
 	path = .vscode
 	url = https://github.com/gorilla-devs/vscode-common-config
-[submodule "src/intl"]
-	path = src/intl
-	url = https://github.com/gorilla-devs/translations
